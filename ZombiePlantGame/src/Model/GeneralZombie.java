@@ -1,4 +1,6 @@
 
+package Model;
+
 public abstract class GeneralZombie extends Entity {
 	
 	private double speed;
@@ -21,29 +23,22 @@ public abstract class GeneralZombie extends Entity {
 	}
 	
 	public void dead(){
-		if(this.health <= 0){
+		if(this.getHealth() <= 0){
 			this.isDead = true;
 		}
 	}
 	
-	public void setHealth(int newHealth){
-		this.health = newHealth;
-	}
-	
-	public int getHealth(){
-		return this.health;
-	}
 	
 	// need to implement
 	public double getPosition(int step){
 		return 0;
 	}
 
-	public int setSpeed(int newSpeed){
+	public void setSpeed(double newSpeed){
 		this.speed = newSpeed;
 	}
 
-	public int getSpeed(){
+	public double getSpeed(){
 		return speed;
 	}
 }

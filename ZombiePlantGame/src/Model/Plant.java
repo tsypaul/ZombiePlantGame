@@ -1,3 +1,4 @@
+package Model;
 
 public class Plant {
 	private int health, coolDown;
