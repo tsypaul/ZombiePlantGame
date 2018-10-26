@@ -1,14 +1,16 @@
 
-public class Zombie {
-	private int health;
-	private final int damage, rowNumber;
+public abstract class GeneralZombie extends Entity {
+	
 	private double speed;
 	private boolean isDead, isStopped;
+
+	public GeneralZombie(){
+		super();
+		this.speed = 15;
+	}
 	
-	public Zombie(int health, int damage, int rowNumber, double speed){
-		this.health = health;
-		this.damage = damage;
-		this.rowNumber = rowNumber;
+	public GeneralZombie(int health, int damage, int count, double speed, String name){
+		super(health,damage,count,name);
 		this.speed = speed;
 		this.isDead = false;
 		this.isStopped = false;
@@ -35,5 +37,13 @@ public class Zombie {
 	// need to implement
 	public double getPosition(int step){
 		return 0;
+	}
+
+	public int setSpeed(int newSpeed){
+		this.speed = newSpeed;
+	}
+
+	public int getSpeed(){
+		return speed;
 	}
 }
