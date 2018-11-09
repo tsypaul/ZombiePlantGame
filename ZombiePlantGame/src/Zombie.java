@@ -3,14 +3,13 @@ public class Zombie {
 	private int health;
 	private final int damage, rowNumber;
 	private double speed;
-	private boolean isDead, isStopped;
+	private boolean isStopped;
 	
 	public Zombie(int health, int damage, int rowNumber, double speed){
 		this.health = health;
 		this.damage = damage;
 		this.rowNumber = rowNumber;
 		this.speed = speed;
-		this.isDead = false;
 		this.isStopped = false;
 	}
 	
@@ -18,10 +17,8 @@ public class Zombie {
 		this.isStopped = true;
 	}
 	
-	public void dead(){
-		if(this.health <= 0){
-			this.isDead = true;
-		}
+	public boolean isdead(){
+		return this.health <= 0 ? true : false;
 	}
 	
 	public void setHealth(int newHealth){
@@ -30,6 +27,10 @@ public class Zombie {
 	
 	public int getHealth(){
 		return this.health;
+	}
+	
+	public int getRowNumber(){
+		return this.rowNumber;
 	}
 	
 	// need to implement
