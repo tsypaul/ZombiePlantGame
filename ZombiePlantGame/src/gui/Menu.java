@@ -15,8 +15,10 @@ public class Menu extends JPanel implements ActionListener{
 	private JButton b = new JButton("Add");
 	private int x, y;
 	private JButton bt;
+	private GameBoard gb;
 	
-	public Menu(int x, int y, JButton bt){
+	public Menu(int x, int y, JButton bt, GameBoard gb){
+		this.gb = gb;
 		this.add(label);
 		this.add(jcb);
 		this.add(b);
@@ -25,43 +27,39 @@ public class Menu extends JPanel implements ActionListener{
 		this.bt = bt;
 		b.addActionListener(this);
 	}
+	
+	public void setPlant(String plant){
+		if(String.valueOf(this.jcb.getSelectedItem()).equals(plant)){
+			if(gb.sun >= gb.priceMap.get(plant)){
+				if(gb.cdMap.get(plant) == 0){
+					try{
+						Image i = ImageIO.read(getClass().getResource(plant + ".png")).getScaledInstance(70, 70, Image.SCALE_DEFAULT);
+						this.bt.setIcon(new ImageIcon(i));
+						// after the plant is set, put this type of plant in cd use the final value for this type
+						gb.cdMap.put(plant, gb.finalCDMap.get(plant));
+						gb.sun -= gb.priceMap.get(plant);
+						gb.sunLabel.setText(gb.sun + "");
+					}catch(IOException e){
+						e.printStackTrace();
+					}
+					this.setVisible(false);
+					//add plant model
+					gb.po.add(new PlantObject(plant));
+				}else{
+					JOptionPane.showMessageDialog(null, plant+"is on cd");
+				}
+			}else{
+				JOptionPane.showMessageDialog(null, "Cannot afford " + plant);
+			}
+		}
+	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
-		if(String.valueOf(this.jcb.getSelectedItem()).equals("Peashooter")){
-			try {
-				Image peashooter = ImageIO.read(getClass().getResource("Peashooter.png")).getScaledInstance(70, 70, Image.SCALE_DEFAULT);
-				this.bt.setIcon(new ImageIcon(peashooter));
-			} catch (IOException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-			this.setVisible(false);
-			//add plant
-		}
-		if(String.valueOf(this.jcb.getSelectedItem()).equals("Sunflower")){
-			try {
-				Image sunflower = ImageIO.read(getClass().getResource("Sunflower.png")).getScaledInstance(70, 70, Image.SCALE_DEFAULT);
-				this.bt.setIcon(new ImageIcon(sunflower));
-			} catch (IOException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-			this.setVisible(false);
-			// add plant
-		}
-		if(String.valueOf(this.jcb.getSelectedItem()).equals("Wallnut")){
-			try {
-				Image wallnut = ImageIO.read(getClass().getResource("Wallnut.png")).getScaledInstance(60, 70, Image.SCALE_DEFAULT);
-				this.bt.setIcon(new ImageIcon(wallnut));
-			} catch (IOException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-			this.setVisible(false);
-			//add plant
-		}
+		setPlant("Peashooter");
+		setPlant("Sunflower");
+		setPlant("Wallnut");
 	}
 	
 }
