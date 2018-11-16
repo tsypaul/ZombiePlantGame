@@ -15,10 +15,13 @@ public class GUI extends JFrame{
 	public static void main(String[] args){
 		JFrame game = new GUI("Zombie Plant Game");
 		GameBoard gb = new GameBoard();
-		game.add(new StartMenu(gb), BorderLayout.NORTH);
-		game.add(gb, BorderLayout.CENTER);
 		
+		ZombiePane z = new ZombiePane();
+		game.getContentPane().add(new StartMenu(gb, z), BorderLayout.NORTH);
+		game.getContentPane().add(gb, BorderLayout.CENTER);
+		game.getRootPane().setGlassPane(z);
 		
+		game.pack();
 		
 		game.setDefaultCloseOperation(game.EXIT_ON_CLOSE);
 		game.setSize(810, 800);
