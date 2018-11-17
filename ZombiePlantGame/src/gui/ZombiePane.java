@@ -1,27 +1,36 @@
 package gui;
 
-import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.LinkedList;
+import java.util.Queue;
 import java.util.Random;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
 
 public class ZombiePane extends JPanel implements ActionListener{
-	
+	// this jpanel paint zombie on glasspane which is on top of gameboard
 	private Image zombie;
 	private int row1;
 	private int round = 0;
-	private ArrayList<ZombieObject> zList = new ArrayList<ZombieObject>();
+	private GameBoard gb;
+	// map row number with a queue of zombies
+	Hashtable<Integer, Queue<ZombieObject>>zList = new Hashtable<>();
 	
-	public ZombiePane(){
+	public ZombiePane(GameBoard gb){
+		this.gb = gb;
+		for(int i = 1; i < 6; i++){
+			//initialize zombie list
+			zList.put(i, new LinkedList<ZombieObject>());
+		}
 		this.setOpaque(false);
 		try {
+			// set zombie image
 			zombie = ImageIO.read(getClass().getResource("Zombie.png")).getScaledInstance(50, 90, Image.SCALE_DEFAULT);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -38,11 +47,16 @@ public class ZombiePane extends JPanel implements ActionListener{
 	@Override
 	public void paintComponent(Graphics g){
 		super.paintComponent(g);
-		for(ZombieObject z : this.zList){
-			// for all the zombie icon in zList, draw the icon on the pane
-			z.checkStatus();
-			g.drawImage(z.getZ(), z.getX(), z.getY(), null);
-		}
+		// paint zombie list
+			for(int i : this.zList.keySet()){
+				Queue<ZombieObject> q = this.zList.get(i);
+				if(!q.isEmpty()){
+					for(ZombieObject z : q){
+						g.drawImage(z.getZ(), z.getX(), z.getY(), null);
+					}
+				}
+			}
+
 	}
 	
 	public void actionPerformed(ActionEvent e){
@@ -52,16 +66,59 @@ public class ZombiePane extends JPanel implements ActionListener{
 			// for loop randomly generate number of zombies
 			for(int i=0; i < r.nextInt(4) + 1; i++){
 				// choose a random row number to deploy the current zombie
-				this.row1 = r.nextInt(5);
-				ZombieObject zo = new ZombieObject(zombie, 40+row1*90, 50);
-				System.out.println("added zombie");
-				zList.add(zo);
+				// there might be multiple zombies generated on the same row
+				this.row1 = r.nextInt(5) + 1;
+				ZombieObject zo = new ZombieObject(zombie, row1*90 - 50, 45);
+				System.out.println("added zombie at row " + row1);
+				zList.get(row1).add(zo);
 			}
 		}
-		for(ZombieObject z : this.zList){
-			z.setX(z.getX() - z.getSpeed());
-			z.updateHealth(20);
+		for(int i : this.zList.keySet()){
+			Queue<ZombieObject> q = this.zList.get(i);
+			// iterate through zombie list
+			if(!q.isEmpty()){
+				// damage to zombie
+				q.peek().updateHealth(30*gb.getPeashooterNumber(i));
+				if(q.peek().checkDead()){
+					// if the first zombie in a queue is dead, remove this zombie from the queue
+					q.remove();
+				}
+				for(ZombieObject z : q){
+					System.out.println("Zombie health: "+z.getHealth()+" current row peashooter: "+gb.getPeashooterNumber(i) + " current row:" + z.calculateRow());
+					System.out.println("Next check position: "+ i +" " +z.getNextCheckCol());
+					// move zombie in the pane
+					z.setX(z.getX() - z.getSpeed());
+					JButton nextCheckBtn = gb.btn[i - 1][z.getNextCheckCol()];
+					if(nextCheckBtn.getIcon() != null){
+						// if next check position contains icon, zombie starts to eat plant
+						for(PlantObject p : gb.po){
+							if(p.getX() == (i - 1) && p.getY() == z.getNextCheckCol()){
+								p.damage();
+								System.out.println("plant health: "+p.getHealth());
+							}
+							if(p.checkDead()){
+								// if a plant is dead, remove its icon and Object model, update peashooters array
+								if(p.getName().equals("Peashooter")){
+									gb.peashooters[i - 1] --;
+								}
+								gb.po.remove(p);
+								nextCheckBtn.setIcon(null);
+							}else{
+								z.setX(z.getCheckX());
+							}
+						}
+					}
+					// update next position to check if there is a plant
+					z.updateCheckX();
+					if(z.getX() < 0){
+						// if a zombie reaches 0 position, game is over
+						JOptionPane.showMessageDialog(null, "game over, you lost");
+						System.exit(0);
+					}
+				}
+			}
 		}
+		// paint zombies
 		this.paintComponent(this.getGraphics());
 		this.setVisible(true);
 		this.repaint();

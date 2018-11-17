@@ -36,27 +36,46 @@ public class ZombieObject {
 		return y;
 	}
 	
+	public int calculateRow(){
+		// (y coordinate of the image - height of the menu bar)/height of the component + 1
+		return (y - 40)/90 + 1;
+	}
+	
+	public int getCheckX(){
+		return this.checkX;
+	}
+	
 	public int getSpeed(){
 		return speed;
 	}
 	
-	public void updateHealth(int health){
-		this.health -= health;
-		if(this.health > 0){
-			System.out.println(""+this.health);
-		}
+	public int getHealth(){
+		return this.health;
 	}
 	
+	public void updateHealth(int health){
+		// peashooter deals damage to zombie
+		this.health -= health;
+	}
 	
-	public void checkStatus(){
-		// check if a block has plant
-		if(this.x < this.checkX){
-			this.x = this.checkX;
-			this.checkX -= 90;
-		}
+	public boolean checkDead(){
 		// check if a plant is dead, if dead, remove it.
 		if(this.health < 0){
 			this.z = null;
+			return true;
 		}
+		return false;
+	}
+	
+	public void updateCheckX(){
+		// check if a block has plant
+		if(this.x < this.checkX){
+			this.checkX -= 90;
+		}
+	}
+
+	public int getNextCheckCol(){
+		// check next possible position for plant
+		return this.checkX/90;
 	}
 }
