@@ -16,7 +16,7 @@ public class GUI extends JFrame{
 		JFrame game = new GUI("Zombie Plant Game");
 		GameBoard gb = new GameBoard();
 		
-		ZombiePane z = new ZombiePane();
+		ZombiePane z = new ZombiePane(gb);
 		game.getContentPane().add(new StartMenu(gb, z), BorderLayout.NORTH);
 		game.getContentPane().add(gb, BorderLayout.CENTER);
 		game.getRootPane().setGlassPane(z);

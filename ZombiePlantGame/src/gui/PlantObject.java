@@ -2,10 +2,10 @@ package gui;
 
 public class PlantObject {
 	
-	private int health;
+	private int health, x, y;
 	private String name;
 
-	public PlantObject(String name){
+	public PlantObject(String name, int x, int y){
 		if(name.equals("Sunflower")){
 			this.health = 50;
 		}
@@ -16,10 +16,16 @@ public class PlantObject {
 			this.health = 100;
 		}
 		this.name = name;
+		this.x = x;
+		this.y = y;
 	}
 	
 	public String getName(){
 		return this.name;
+	}
+	
+	public int getHealth(){
+		return this.health;
 	}
 	
 	public boolean checkDead(){
@@ -27,8 +33,14 @@ public class PlantObject {
 	}
 	
 	public void damage(){
-		this.health -= 25;
+		this.health -= 50;
 	}
 	
+	public int getX(){
+		return this.x;
+	}
 	
+	public int getY(){
+		return this.y;
+	}
 }
